@@ -66,12 +66,15 @@ sys_dup(void)
   return fd;
 }
 
+static int readcount = 0;
+
 int
 sys_read(void)
 {
   struct file *f;
   int n;
   char *p;
+  readcount++;
 
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
@@ -88,6 +91,14 @@ sys_write(void)
   if(argfd(0, 0, &f) < 0 || argint(2, &n) < 0 || argptr(1, &p, n) < 0)
     return -1;
   return filewrite(f, p, n);
+}
+
+int
+sys_getreadcount(void)
+{
+  if(readcount < 0)
+    return -1;
+  return readcount;
 }
 
 int
